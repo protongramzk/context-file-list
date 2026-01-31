@@ -1,0 +1,10 @@
+{
+  "inputDir": ".",
+  "outputFile": "index.cfl",
+  "exclude": [
+    ".git",
+    "node_modules",
+    "index.cfl",
+    "cflconf.json"
+  ]
+}

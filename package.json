@@ -1,0 +1,12 @@
+{
+  "name": "cfl-tool",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "cfl": "./index.js"
+  },
+  "dependencies": {
+    "fs": "latest",
+    "path": "latest"
+  }
+}

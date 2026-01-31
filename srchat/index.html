@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bob Assistant</title>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/orb.css">
+  <link rel="stylesheet" href="styles/dialog.css">
+  <link rel="stylesheet" href="styles/themes.css">
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">Bob Assistant</div>
+    <div class="header-right">
+      <div class="connection">
+        <span id="connectionText">disconnected</span>
+        <div class="connection-dot" id="connectionDot"></div>
+      </div>
+      <button class="settings-btn" id="settingsBtn">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Text Answer Mode: Messages -->
+  <div class="messages-container" id="messagesContainer">
+    <div class="messages-fade"></div>
+    <div class="messages-scroll" id="messagesScroll">
+      <div class="messages-list" id="messagesList"></div>
+    </div>
+  </div>
+
+  <!-- Voice Mode: Main Content -->
+  <div class="main-content" id="voiceModeContent">
+    <!-- Animated Orb -->
+    <div class="orb-container" id="orbContainer">
+      <div class="orb-ring-outer" id="orbRingOuter"></div>
+      <div class="orb-ring-inner" id="orbRingInner"></div>
+      <div class="orb-body" id="orbBody">
+        <div class="orb-glow-1"></div>
+        <div class="orb-glow-2"></div>
+        <div class="orb-glow-3"></div>
+        <div class="orb-core">
+          <div class="orb-center" id="orbCenter"></div>
+          <div class="orb-center-inner"></div>
+        </div>
+      </div>
+      <div class="particle particle-1" id="particle1"></div>
+      <div class="particle particle-2" id="particle2"></div>
+      <div class="particle particle-3" id="particle3"></div>
+    </div>
+
+    <div class="listening-indicator" id="listeningIndicator">Listening...</div>
+    <div class="converting-indicator" id="convertingIndicator">Converting to audio...</div>
+
+    <div class="voice-status" id="voiceStatus">
+      <span class="voice-status-icon" id="voiceStatusIcon"></span>
+      <span id="voiceStatusText"></span>
+    </div>
+
+    <div class="voice-level-container" id="voiceLevelContainer">
+      <div class="voice-level-bar">
+        <div class="voice-level-fill" id="voiceLevelFill"></div>
+      </div>
+      <p class="voice-level-label">Voice level (0 = room silence)</p>
+    </div>
+
+    <div class="silence-countdown" id="silenceCountdown"></div>
+
+    <div class="controls" id="voiceControls">
+      <button class="btn btn-destructive" id="micToggleBtn">Turn Mic ON</button>
+      <button class="btn btn-outline btn-icon" id="toggleTextInputBtn" title="Show text input">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+      </button>
+      <button class="btn btn-secondary btn-icon" id="sendNowBtn" disabled title="Send audio now">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="mode-selector-container">
+    <div class="mode-dropdown" id="modeDropdown">
+      <div class="mode-option" data-mode="text-answer">
+        <svg class="mode-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        <div>
+          <div class="mode-option-label">Text Answer</div>
+          <div class="mode-option-desc">Chat with text bubbles</div>
+        </div>
+      </div>
+      <div class="mode-option active" data-mode="text-to-voice">
+        <svg class="mode-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        </svg>
+        <div>
+          <div class="mode-option-label">Text to Voice</div>
+          <div class="mode-option-desc">Voice responses</div>
+        </div>
+      </div>
+      <div class="mode-option" data-mode="voice-to-voice">
+        <svg class="mode-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+        </svg>
+        <div>
+          <div class="mode-option-label">Voice to Voice</div>
+          <div class="mode-option-desc">Interactive voice call</div>
+        </div>
+      </div>
+      <div class="mode-option" data-mode="bob-live">
+        <svg class="mode-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        <div>
+          <div class="mode-option-label">Bob Live</div>
+          <div class="mode-option-desc">Video + Voice</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Input (fixed at bottom) -->
+  <div class="bottom-blur"></div>
+  <div class="chat-container" id="chatContainer">
+    <div class="pending-files" id="pendingFilesContainer">
+      <div class="pending-files-header">
+        <span class="pending-files-count" id="pendingFilesCount">0 file dipilih</span>
+        <button class="pending-files-clear" id="clearFilesBtn">Hapus Semua</button>
+      </div>
+      <div class="pending-files-list" id="pendingFilesList"></div>
+      <p style="font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.5rem;">
+        Tambahkan caption atau langsung kirim
+      </p>
+    </div>
+
+    <div class="chat-input-wrapper">
+      <div id="modeBtnWrapper" style="display:contents;">
+        <button class="btn btn-ghost btn-icon" id="attachFileBtn">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+          </svg>
+        </button>
+      </div>
+      <button class="btn btn-ghost btn-icon" id="modeSelectorBtn">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="currentModeIconSvg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        </svg>
+      </button>
+      <textarea 
+        class="chat-textarea" 
+        id="messageInput" 
+        placeholder="Message Bob assistant..."
+      ></textarea>
+
+      <button class="btn btn-ghost btn-icon" id="voiceRecordBtn">
+        <svg class="icon" id="micIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+        </svg>
+      </button>
+
+      <button class="btn btn-primary btn-icon" id="sendBtn" style="display: none;">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <input type="file" id="fileInput" class="hidden-input" multiple>
+</div>
+
+<!-- Settings Dialog -->
+<div class="dialog-overlay" id="settingsDialog">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h2 class="dialog-title">Settings</h2>
+      <p class="dialog-desc">Configure your webhook, authentication, and TTS</p>
+    </div>
+    <button class="dialog-close" id="closeSettingsBtn">×</button>
+
+    <div class="tabs-list">
+      <button class="tab-btn active" data-tab="webhook">Webhook</button>
+      <button class="tab-btn" data-tab="auth">Auth</button>
+      <button class="tab-btn" data-tab="tts">TTS</button>
+      <button class="tab-btn" data-tab="theme">Theme</button>
+    </div>
+
+    <div class="tab-content active" id="tab-webhook">
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <div class="settings-card-title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+            </svg>
+            Webhook
+          </div>
+          <button class="expand-btn expanded" id="webhookExpand">
+            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+        <div class="settings-card-content expanded" id="webhookContent">
+          <div class="form-group">
+            <label class="form-label">Webhook URL</label>
+            <input type="url" class="form-input" id="webhookUrlInput" placeholder="https://your-webhook.com/...">
+          </div>
+          <button class="btn btn-primary" style="width: 100%;" id="saveWebhookBtn">
+            Save Webhook URL
+          </button>
+          <p style="font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.75rem;">
+            Configure your webhook to receive messages and responses
+          </p>
+        </div>
+        <div class="settings-card-status" id="webhookStatus" style="display: none;">✓ Webhook configured</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-auth">
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <div class="settings-card-title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Webhook Authentication
+          </div>
+          <button class="expand-btn" id="authExpand">
+            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+        <div class="settings-card-content" id="authContent">
+          <div class="form-group switch-row">
+            <label class="form-label">Enable Authentication</label>
+            <div class="switch" id="authSwitch"></div>
+          </div>
+          
+          <div id="authFields" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">Authentication Type</label>
+              <select class="form-select" id="authTypeSelect">
+                <option value="basic">Basic Authentication</option>
+                <option value="header">Header Authentication</option>
+                <option value="jwt">JWT Token</option>
+              </select>
+            </div>
+
+            <div id="basicAuthFields">
+              <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-input" id="authUsername" placeholder="Enter username">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="authPassword" placeholder="Enter password">
+              </div>
+            </div>
+
+            <div id="headerAuthFields" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">Header Key</label>
+                <input type="text" class="form-input" id="authHeaderKey" placeholder="e.g., X-API-Key">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Header Value</label>
+                <input type="text" class="form-input" id="authHeaderValue" placeholder="Enter header value">
+              </div>
+            </div>
+
+            <div id="jwtAuthFields" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">JWT Token</label>
+                <input type="text" class="form-input" id="authJwtToken" placeholder="Enter JWT token">
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="saveAuthBtn">
+            Save Authentication
+          </button>
+        </div>
+        <div class="settings-card-status" id="authStatus" style="display: none;">✓ Authentication enabled</div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-tts">
+      <div class="form-group">
+        <label class="form-label" style="font-weight: 500;">TTS VOICE</label>
+        <div class="radio-group" style="margin-top: 0.5rem;">
+          <div class="radio-item active" id="ttsBytez">
+            <div class="radio-circle"></div>
+            <span>Bytez (Free)</span>
+          </div>
+          <div class="radio-item" id="ttsElevenlabs">
+            <div class="radio-circle"></div>
+            <span>ElevenLabs</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="elevenlabsSection" style="display: none; padding-top: 1rem; border-top: 1px solid hsla(200, 100%, 55%, 0.2); margin-top: 1rem;">
+        <label class="form-label" style="font-weight: 500;">ElevenLabs API Keys (<span id="apiKeyCount">0</span>)</label>
+        
+        <div class="api-keys-list" id="apiKeysList"></div>
+
+        <div class="add-key-row">
+          <input type="text" class="form-input" id="newKeyName" placeholder="Key name (e.g., Main)">
+          <input type="password" class="form-input" id="newKeyValue" placeholder="API Key">
+        </div>
+        <button class="btn btn-primary" style="width: 100%;" id="addApiKeyBtn">
+          + Add API Key
+        </button>
+        <p id="noKeysMessage" style="font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.75rem;">
+          Add at least one ElevenLabs API key to use this provider.
+        </p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-theme">
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Scripts -->
+<script type="module" src="scripts/main.js"></script>
+
+</body>
+</html>

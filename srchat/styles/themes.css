@@ -1,0 +1,24 @@
+/* ============================================
+   THEME SYSTEM
+   ============================================ */
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.theme-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.75rem;
+  transition: opacity 0.2s;
+}
+
+.theme-btn:hover {
+  opacity: 0.8;
+}
